@@ -1,0 +1,41 @@
+﻿@model Agriculture.Models.ViewModels.CategoryViewModel
+@using Agriculture.Models.ViewModels
+
+@{
+    Layout = null;
+    CustomerViewModel currentCustomer = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@Model.Name</title>
+</head>
+<body>
+    <div>
+        Seasons
+        @{
+            foreach (CropViewModel productViewModel in Model.Crops)
+            {
+                <p>
+                    @Html.ActionLink(productViewModel.Name, "Crop", "Home", new { cropID = productViewModel.Id }, new { })
+                </p>
+            }
+            if (currentCustomer == null)
+            {
+                @Html.ActionLink("Login", "Login", "Home");
+            }
+            else
+            {
+                <p>
+                    Hello @currentCustomer.FirstName @currentCustomer.LastName
+                </p>
+            }
+
+        }
+
+    </div>
+</body>
+</html>

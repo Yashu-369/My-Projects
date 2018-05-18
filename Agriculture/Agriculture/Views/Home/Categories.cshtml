@@ -1,0 +1,42 @@
+﻿@model Agriculture.Models.ViewModels.CategoriesViewModel
+@using Agriculture.Models.ViewModels
+@{
+    Layout = null;
+    CustomerViewModel currentCustomer = ViewBag.Customer;
+}
+<h2>Seasons</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Seasons</title>
+</head>
+<body>
+    <div>
+        @{
+            foreach (CategoryViewModel categoryViewModel in Model.Categories)
+            {
+                <p>
+                    @Html.ActionLink(categoryViewModel.Name, "Category", "Home", new { SeasonID = categoryViewModel.Id }, new { })
+                </p>
+            }
+
+            if (currentCustomer.FirstName == null)
+            {
+                @Html.ActionLink("Login", "Login", "Home");
+            }
+            else
+            {
+                <p>
+                    Hello @currentCustomer.FirstName @currentCustomer.LastName
+                </p>
+            }
+
+            if (currentCustomer.PrivilegeId == 1)
+            {
+                @Html.ActionLink("Add Crop", "AddCrop", "Home");
+            }
+        }
+    </div>
+</body>
+</html>

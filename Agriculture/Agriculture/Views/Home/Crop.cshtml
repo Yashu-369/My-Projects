@@ -1,0 +1,111 @@
+﻿@model Agriculture.Models.ViewModels.CropViewModel
+@using Agriculture.Models.ViewModels
+@{
+    
+    CustomerViewModel currentCustomer = ViewBag.Customer;
+
+    var comments = (IEnumerable<Agriculture.Models.Entities.CropsFeedback>)ViewBag.Comments;
+    var ratingSum = ViewBag.RatingSum;
+    var ratingCount = ViewBag.RatingCount;
+
+    decimal rating = 0;
+    if (ratingCount > 0)
+    {
+        rating = (ratingSum / ratingCount);
+    }
+    var totalRating = decimal.Parse(rating.ToString());
+}
+<h2>Crop</h2>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Crop</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script>
+    function SCRate() {
+        for (var i = 1; i <= @totalRating; i++) {
+            $("#sRate" + i).attr('class', 'starGlowN');
+        }
+    }
+    $(function(){
+        SCRate();
+    });
+    </script>
+</head>
+<body>
+    
+    <div>
+        <span class="starFadeN" id="sRate1"></span>
+        <span class="starFadeN" id="sRate2"></span>
+        <span class="starFadeN" id="sRate3"></span>
+        <span class="starFadeN" id="sRate4"></span>
+        <span class="starFadeN" id="sRate5"></span>
+    </div>
+    <div>
+        <p>Name: @Model.Name</p>
+        <p>Price: @Model.Price</p>
+        <p>Pesticides used: @Model.PesticidesUsed</p>
+        @using (Html.BeginForm("CropFeedback", "Home"))
+        {
+            <div class="pull-right">
+                @Html.HiddenFor(p => p.Id)
+                @Html.Hidden("returnUrl", Context.Request.Host + Context.Request.Path + Context.Request.QueryString)
+                @if (currentCustomer != null && currentCustomer.PrivilegeId == 0)
+                {
+                <input type="submit" class="btn btn-success" value="Give Feedback" />
+                }
+            </div>
+        }
+        <p><img src="@Model.CropImage" height="400" width="400"/></p>
+
+        @foreach (var c in comments)
+        {
+            <hr />
+            <div class="row">
+                <div class="col-md-3">
+                    <i>@c.ThisDateTime</i>
+                    <br />
+                    @for (var i = 1; i <= c.Rating; i++)
+                    {
+                        <span class="starGlowN"></span>
+                    }
+                    @for (var i = (c.Rating + 1); i <= 5; i++)
+                    {
+                        <span class="starFadeN"></span>
+                    }
+                </div>
+                <div class="col-md-9">
+                    @Html.Raw(c.Feedback.Replace("\n", "<br />"))
+
+
+                </div>
+            </div>
+        }   
+
+        @{
+            foreach (CategoryViewModel categoryViewModel in Model.Categories)
+            {
+                <p>
+                    @Html.ActionLink(categoryViewModel.Name, "Category", "Home", new { categoryID = categoryViewModel.Id }, new { })
+                </p>
+            }
+            if (currentCustomer == null)
+            {
+                @Html.ActionLink("Login", "Login", "Home");
+            }
+            else
+            {
+                <p>
+                    Hello @currentCustomer.FirstName @currentCustomer.LastName
+                </p>
+            }
+        }
+    </div>
+</body>
+
+</html>
+
